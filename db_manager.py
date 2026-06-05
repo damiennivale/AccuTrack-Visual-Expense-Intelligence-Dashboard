@@ -3,20 +3,12 @@ import json
 import os
 from datetime import datetime
 
-# ========== CONFIGURATION ==========
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "receipts.db")
-IMAGES_DIR = os.path.join(BASE_DIR, "receipt_images")
+IMAGES_DIR = "receipt_images"
+DB_PATH = "receipts.db"
 
-# ========== DATABASE SETUP ==========
 def init_db():
-    """Create the receipts table and images folder if they don't exist."""
-    try:
-        os.makedirs(IMAGES_DIR, exist_ok=True)
-        print(f"Images folder ready: {IMAGES_DIR}")
-    except Exception as e:
-        print(f"Note: Could not create images folder: {e}")
-    
+    """Create the receipts table and images folder"""
+    os.makedirs(IMAGES_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
@@ -36,16 +28,14 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
-    print(f"Database ready at {DB_PATH}")
+    print("Database ready")
 
 def save_receipt(extracted_data, image_file=None):
-    """Insert one receipt into the database."""
     image_path = None
     if image_file is not None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         filename = f"receipt_{timestamp}.jpg"
         image_path = os.path.join(IMAGES_DIR, filename)
-        
         if hasattr(image_file, 'save'):
             image_file.save(image_path)
         elif isinstance(image_file, bytes):
@@ -97,45 +87,15 @@ def get_all_receipts():
     conn.close()
     return receipts
 
-def get_receipts_by_date_range(start_date, end_date):
-    """Filter receipts by date range (YYYY-MM-DD)."""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT * FROM receipts 
-        WHERE date BETWEEN ? AND ? 
-        ORDER BY date
-    ''', (start_date, end_date))
-    rows = cursor.fetchall()
-    receipts = [dict(row) for row in rows]
-    conn.close()
-    for r in receipts:
-        r["missing_fields"] = json.loads(r["missing_fields"]) if r["missing_fields"] else []
-    return receipts
-
-def get_receipt_by_id(receipt_id):
-    """Return a single receipt by its ID."""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM receipts WHERE id = ?", (receipt_id,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        receipt = dict(row)
-        receipt["missing_fields"] = json.loads(receipt["missing_fields"]) if receipt["missing_fields"] else []
-        return receipt
-    return None
-
 def export_to_csv(filename="expenses_export.csv"):
-    """Export all receipt records to a CSV file."""
+    """Export all receipts to CSV (adds timestamp to avoid permission errors)."""
     receipts = get_all_receipts()
     if not receipts:
         return None
     import csv
-    # Save CSV in the same base directory
-    csv_path = os.path.join(BASE_DIR, filename)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    base, ext = os.path.splitext(filename)
+    csv_path = f"{base}_{timestamp}{ext}"
     with open(csv_path, 'w', newline='', encoding='utf-8') as f:
         fieldnames = receipts[0].keys()
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -144,7 +104,7 @@ def export_to_csv(filename="expenses_export.csv"):
     return csv_path
 
 def get_spending_summary_by_category():
-    """Return {category: total_spent} for pie chart."""
+    """Return {category: total_spent} for pie chart"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
@@ -158,7 +118,7 @@ def get_spending_summary_by_category():
     return {row[0]: row[1] for row in rows if row[0] is not None}
 
 def get_weekly_spending():
-    """Return {date: daily_total} for last 7 days."""
+    """Return {date: daily_total} for last 7 days"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
@@ -172,10 +132,61 @@ def get_weekly_spending():
     conn.close()
     return {row[0]: row[1] for row in rows}
 
-def clear_all_receipts():
-    """Delete all records from the receipts table (use with care)."""
+def get_daily_spending(start_date=None, end_date=None):
+    """Return {date: daily_total} for optional date range."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM receipts")
-    conn.commit()
+    
+    query = "SELECT date, SUM(total) as daily_total FROM receipts WHERE 1=1"
+    params = []
+    
+    if start_date:
+        query += " AND date >= ?"
+        params.append(start_date)
+    if end_date:
+        query += " AND date <= ?"
+        params.append(end_date)
+    
+    query += " GROUP BY date ORDER BY date"
+    
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
     conn.close()
+    return {row[0]: row[1] for row in rows}
+
+# ========== NEW SUMMARY FUNCTIONS ==========
+
+def get_net_total():
+    """
+    Return sum of (total - tax) across all receipts.
+    This is the total amount excluding tax.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(total - COALESCE(tax, 0)) FROM receipts")
+    net = cursor.fetchone()[0]
+    conn.close()
+    return net if net is not None else 0.0
+
+def get_gross_total():
+    """
+    Return sum of total (including tax) across all receipts.
+    This is the total amount including tax.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(total) FROM receipts")
+    gross = cursor.fetchone()[0]
+    conn.close()
+    return gross if gross is not None else 0.0
+
+def get_total_tax():
+    """
+    Return sum of tax across all receipts.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(COALESCE(tax, 0)) FROM receipts")
+    total_tax = cursor.fetchone()[0]
+    conn.close()
+    return total_tax if total_tax is not None else 0.0

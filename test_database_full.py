@@ -1,4 +1,3 @@
-# test_database_full.py
 import os
 import json
 from db_manager import init_db, save_receipt, get_all_receipts, export_to_csv
@@ -8,10 +7,10 @@ print("🔧 Initialising database...")
 init_db()
 print("✅ Database ready.\n")
 
-# ---------- Parse and save the real receipt from sample1.json ----------
+# Parse from sample1.json
 print("📄 Parsing sample1.json ...")
 if not os.path.exists("sample1.json"):
-    print("❌ ERROR: sample1.json not found.")
+    print("❌ ERROR: sample1.json not found")
     exit(1)
 
 receipt_data = parse_receipt_json("sample1.json")
@@ -30,7 +29,7 @@ if not sample_exists:
 else:
     print("⏭️ Sample receipt already exists – skipping.\n")
 
-# ---------- Add dummy receipts (only if they don't exist) ----------
+# dummy receipt for testing
 receipt2 = {
     "merchant": "Starbucks Coffee",
     "date": "2025-03-25",
