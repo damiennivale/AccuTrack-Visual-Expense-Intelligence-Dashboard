@@ -1,0 +1,48 @@
+id,date,merchant,items,total,tax,category,missing_fields,image_path,raw_ocr_text,created_at
+10,2025-03-26,Guardian Pharmacy,"Vitamin C RM25.00, Face Mask RM20.30",45.3,2.72,Health,[],,Guardian receipt,2026-06-05T21:04:42.252550
+8,2025-03-25,Starbucks Coffee,"Latte RM12.00, Muffin RM6.50",18.5,1.11,Dining,[],,Starbucks receipt,2026-06-05T20:57:08.537120
+9,2025-03-24,Grab Car,Ride to campus,12.0,,Transport,['tax'],,Grab receipt,2026-06-05T20:57:08.547304
+7,2017-11-20,99 SPEED MART 5/B (S19537-X),RM117.90; RM34.90; RM4.10; RM5.89; RM6.99,169.78,169.78,Groceries,[],,"99 SPEED MART 5/B (S19537-X)
+LOT P.T. 2811, JALAN ANGSA,
+TAMAN BERKELEY
+4115G KLANG, SELANGOR
+1413-SETIA ALAM2
+GST ID.N0:000181747712
+INVOICE N0:18222/102/T0341
+03:29PM
+562936
+20-11-17
+2973 PEDIASURE COMPLETE S3S
+RM117.90
+。
+069 MIL0 2KG
+RM34.90
+福
+5
+2709 ZING HEING OAT & QHEAT
+RM4.10
+3
+2893 DISNEY DS112 WIDE NECK
+RM5.89
+三
+4385 JOHNSONS PHS.5 2IN1 B0
+RM6.99
+5
+Total Sales (Inclusive GST)RM
+169.78
+Rounding Adjusiment RM
+.02
+Rounding RM
+169.80
+CASH RM
+200.00
+CHANGE RY
+30.20
+GST SUmmary
+Amount(RM)
+Tax(RH)
+5=h以
+160.17
+9.61
+Thank You.Please Cone aain
+Keep the invoice far applicable returns",2026-06-05T20:57:08.528185
