@@ -1,0 +1,5 @@
+paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+paddleocr
+opencv-python
+numpy
+thefuzz
