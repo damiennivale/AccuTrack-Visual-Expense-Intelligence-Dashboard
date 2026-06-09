@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     # # OR filter by extensions
     # image_extensions = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.tiff"]
-    # image_paths = []
+    image_paths = ['../../our-tab-for-two.jpg']
     # for ext in image_extensions:
     #     image_paths.extend(image_folder.glob(ext))
 
