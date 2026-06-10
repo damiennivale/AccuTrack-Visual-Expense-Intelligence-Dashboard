@@ -1,0 +1,54 @@
+{
+  "id": "gen-1781078196-502FHqYfXFtD4GWRRJBG",
+  "object": "chat.completion",
+  "created": 1781078196,
+  "model": "openai/gpt-oss-120b:free",
+  "provider": "OpenInference",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+    {
+      "index": 0,
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"merchant\": \"Super Terminal Sdn Bhd\",\n  \"date\": \"20/01/2018\",\n  \"items\": [\n    {\n      \"name\": \"LED 11 SIGNAL\",\n      \"price\": 58.30\n    },\n    {\n      \"name\": \"(Z SH NA CONDLMEO (KOZI) 12V DDEL SC1201 )(MT)\",\n      \"price\": 19.08\n    },\n    {\n      \"name\": \"USE (SEMI) MOTOR OIL\",\n      \"price\": 31.80\n    },\n    {\n      \"name\": \"OIL FILTER LC135\",\n      \"price\": 13.78\n    },\n    {\n      \"name\": \"BULB SIGNAL 12V8 RYZ G18.5\",\n      \"price\": 3.18\n    },\n    {\n      \"name\": \"NUMBER PLASTIC\",\n      \"price\": 6.36\n    }\n  ],\n  \"tax\": 7.50,\n  \"total\": 132.50,\n  \"category\": null\n}",
+        "refusal": null,
+        "reasoning": "We need to extract merchant, date, items, tax, total, category.\n\nGiven OCR text:\n\n\"Super Terminal Sdn Bhd\n(1150024-H)\n5100 Kuala Lu\nGST ID NO. 000180269056\nPLATE TO.\n1. LED 11 SIGNAL\n* X 55.00\n58.30 SR\n(Z SH NA CONDLMEO (KOZI) 12V\nDDEL SC1201 )(MT)\n18.00\n19.08 SR\nUSE (SEMI) MOTOR OIL\nIASU.UU\n31.80 SR\n4. OIL FILTER LC135\n1 X 13.00\n13.78\nSR\n5. BULB SIGNAL 12V8 RYZ G18.5\n1 x 3.00\n3.18\nSR\n6. NUMBER PLASTIC\n6 X 1.00\n6.36 SR\nrastal Sales Inclusive Gst @6%\n132.5 0\nCASH\n132.50\nCHANGE\n0.00\nsulmary\nAnounaRM)\nTax(RM)\nSR @ 5%\n125.00\n7.50\n7.50\nINV NC CS-1801-008830Ate  20/01/2018Dining Groceries Transport Health Entertainment Utilities Education Other\"\n\nWe need items: each item with name and price.\n\nWe have lines:\n\n1. LED 11 SIGNAL * X 55.00 58.30 SR -> maybe quantity? \"* X 55.00\"? The price maybe 58.30? Hard to parse. Could be price per unit 55.00, total 58.30. But we need price (maybe total). Use 58.30.\n\n2. \"(Z SH NA CONDLMEO (KOZI) 12V DDEL SC1201 )(MT) 18.00 19.08 SR\" -> price 19.08.\n\n3. \"USE (SEMI) MOTOR OIL IASU.UU 31.80 SR\" -> price 31.80.\n\n4. \"4. OIL FILTER LC135 1 X 13.00 13.78 SR\" -> price 13.78.\n\n5. \"5. BULB SIGNAL 12V8 RYZ G18.5 1 x 3.00 3.18 SR\" -> price 3.18.\n\n6. \"6. NUMBER PLASTIC 6 X 1.00 6.36 SR\" -> price 6.36.\n\nThus items with these names.\n\nTax: There's \"Tax(RM) SR @ 5% 125.00 7.50 7.50\". Not clear. Maybe tax amount is 7.50. The total maybe 132.50.\n\nAlso there's \"rastal Sales Inclusive Gst @6% 132.50\". That might be total includes GST. So total = 132.50. Tax maybe 7.50 (5%?). Could be both. We'll set tax to 7.50.\n\nDate: \"20/01/2018\" appears near end: \"INV NC CS-1801-008830Ate  20/01/2018Dining\". So date = \"20/01/2018\".\n\nMerchant: \"Super Terminal Sdn Bhd\".\n\nCategory: The last line includes list: \"Dining Groceries Transport Health Entertainment Utilities Education Other\". Not clear which category: maybe \"Dining\". But the receipt seems for automotive parts. Could be \"Other\". We'll set null.\n\nReturn JSON.\n\nCheck schema: items list of objects with name and price float.\n\nWe'll provide price numbers.\n\nThus output JSON.\n\n",
+        "reasoning_details": [
+          {
+            "type": "reasoning.text",
+            "text": "We need to extract merchant, date, items, tax, total, category.\n\nGiven OCR text:\n\n\"Super Terminal Sdn Bhd\n(1150024-H)\n5100 Kuala Lu\nGST ID NO. 000180269056\nPLATE TO.\n1. LED 11 SIGNAL\n* X 55.00\n58.30 SR\n(Z SH NA CONDLMEO (KOZI) 12V\nDDEL SC1201 )(MT)\n18.00\n19.08 SR\nUSE (SEMI) MOTOR OIL\nIASU.UU\n31.80 SR\n4. OIL FILTER LC135\n1 X 13.00\n13.78\nSR\n5. BULB SIGNAL 12V8 RYZ G18.5\n1 x 3.00\n3.18\nSR\n6. NUMBER PLASTIC\n6 X 1.00\n6.36 SR\nrastal Sales Inclusive Gst @6%\n132.5 0\nCASH\n132.50\nCHANGE\n0.00\nsulmary\nAnounaRM)\nTax(RM)\nSR @ 5%\n125.00\n7.50\n7.50\nINV NC CS-1801-008830Ate  20/01/2018Dining Groceries Transport Health Entertainment Utilities Education Other\"\n\nWe need items: each item with name and price.\n\nWe have lines:\n\n1. LED 11 SIGNAL * X 55.00 58.30 SR -> maybe quantity? \"* X 55.00\"? The price maybe 58.30? Hard to parse. Could be price per unit 55.00, total 58.30. But we need price (maybe total). Use 58.30.\n\n2. \"(Z SH NA CONDLMEO (KOZI) 12V DDEL SC1201 )(MT) 18.00 19.08 SR\" -> price 19.08.\n\n3. \"USE (SEMI) MOTOR OIL IASU.UU 31.80 SR\" -> price 31.80.\n\n4. \"4. OIL FILTER LC135 1 X 13.00 13.78 SR\" -> price 13.78.\n\n5. \"5. BULB SIGNAL 12V8 RYZ G18.5 1 x 3.00 3.18 SR\" -> price 3.18.\n\n6. \"6. NUMBER PLASTIC 6 X 1.00 6.36 SR\" -> price 6.36.\n\nThus items with these names.\n\nTax: There's \"Tax(RM) SR @ 5% 125.00 7.50 7.50\". Not clear. Maybe tax amount is 7.50. The total maybe 132.50.\n\nAlso there's \"rastal Sales Inclusive Gst @6% 132.50\". That might be total includes GST. So total = 132.50. Tax maybe 7.50 (5%?). Could be both. We'll set tax to 7.50.\n\nDate: \"20/01/2018\" appears near end: \"INV NC CS-1801-008830Ate  20/01/2018Dining\". So date = \"20/01/2018\".\n\nMerchant: \"Super Terminal Sdn Bhd\".\n\nCategory: The last line includes list: \"Dining Groceries Transport Health Entertainment Utilities Education Other\". Not clear which category: maybe \"Dining\". But the receipt seems for automotive parts. Could be \"Other\". We'll set null.\n\nReturn JSON.\n\nCheck schema: items list of objects with name and price float.\n\nWe'll provide price numbers.\n\nThus output JSON.\n\n",
+            "format": "unknown",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 442,
+    "completion_tokens": 994,
+    "total_tokens": 1436,
+    "cost": 0,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 64,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0,
+      "upstream_inference_prompt_cost": 0,
+      "upstream_inference_completions_cost": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 575,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  }
+}
