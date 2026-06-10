@@ -6,11 +6,25 @@ def ocr_tool(image_path):
     return text
 
 #Nabilah's part (your python filename)
-from parser import extract_receipt
+from parser import receipt
 
-def parser_tool(ocr_text):
-    data = extract_receipt(ocr_text)
-    return data
+def getMerchant():
+    return receipt.get("merchant")
+
+def getDate():
+    return receipt.get("date")
+
+def getItems():
+    return receipt.get("items", [])
+
+def getTotal():
+    return receipt.get("total")
+
+def getTax():
+    return receipt.get("tax")
+
+def getCategory():
+    return receipt.get("category")
 
 #Damia's part (db_manager.py)
 from db_manager import (
