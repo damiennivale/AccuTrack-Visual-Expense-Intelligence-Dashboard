@@ -1,8 +1,11 @@
 #Imran's part (your python filename)
-from ocr import run_ocr_logic  
+from preprocess import preprocess_receipt  
 
 def ocr_tool(image_path):
-    text = run_ocr_logic(image_path)
+    """
+    Input an array of string(s) that represent receipt image paths
+    """
+    text = preprocess_receipt(image_path)
     return text
 
 #Nabilah's part (your python filename)
